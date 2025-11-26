@@ -1,30 +1,31 @@
-# Utilisation d'une image Node.js officielle
 FROM node:18-alpine
 
-# Installer les outils de compilation pour sqlite3, etc.
+# Install build tools
 RUN apk update && apk add --no-cache python3 make gcc g++
 
-# Répertoire de travail
+# Working directory
 WORKDIR /app
 
-# Copier package.json et installer les dépendances
-COPY package*.json ./
+# Copy only backend package files
+COPY backend/package*.json ./
+
+# Install dependencies
 RUN npm install
 
-# Nettoyer les outils de build pour alléger l'image
+# Remove build tools
 RUN apk del python3 make gcc g++
 
-# Créer le dossier pour la base de données
+# Create database folder
 RUN mkdir -p /app/database
 
-# Copier le fichier init.sql depuis le dossier database à la racine du projet
-COPY ../database/init.sql /app/database/
+# Copy SQL file from database folder in the root build context
+COPY database/init.sql /app/database/
 
-# Copier le reste du code de l'application
-COPY . .
+# Copy backend source code
+COPY backend/. .
 
-# Exposer le port 3000
+# Expose port
 EXPOSE 3000
 
-# Lancer l'application
+# Start application
 CMD ["npm", "start"]
