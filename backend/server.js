@@ -9,10 +9,14 @@ const cors = require('cors');
 app.use(cors());
 app.use(express.json());
 
-// Connexion PostgreSQL
+// Connexion PostgreSQL via Render environment variables
 const db = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false
+  host: process.env.DB_HOST,         // ex: dpg-d4jli5euk2gs73bo2kog-a
+  port: process.env.DB_PORT || 5432, // 5432
+  user: process.env.DB_USER,         // ex: tpdevops_86i2_user
+  password: process.env.DB_PASSWORD, // Render DB password
+  database: process.env.DB_NAME,     // ex: tpdevops_86i2
+  ssl: { rejectUnauthorized: false } // required for Render DB
 });
 
 // Initialisation de la base
@@ -27,7 +31,7 @@ async function setupDatabase() {
     `);
     await db.query(`
       INSERT INTO users (name, email)
-      VALUES ('Alice', 'alice@example.com'), ('Bob', 'bob@example.com')
+      VALUES ('Mariem', 'Mariem@example.com'), ('Nawel', 'Nawel@example.com')
       ON CONFLICT (email) DO NOTHING
     `);
     console.log('Base prête à l’emploi !');
@@ -37,7 +41,7 @@ async function setupDatabase() {
 }
 
 // Routes
-app.get('/', (req, res) => res.json({ status: "OK", environment: "Vercel" }));
+app.get('/', (req, res) => res.json({ status: "OK", environment: "Render" }));
 
 app.get('/api', (req, res) => res.json({
   note: "API fonctionnelle !",
