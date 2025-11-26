@@ -1,31 +1,26 @@
 FROM node:18-alpine
 
-# Install build tools
-RUN apk update && apk add --no-cache python3 make gcc g++
+RUN apk add --no-cache python3 make gcc g++
 
-# Working directory
 WORKDIR /app
 
-# Copy only backend package files
+# Install backend dependencies
 COPY backend/package*.json ./
-
-# Install dependencies
 RUN npm install
 
-# Remove build tools
 RUN apk del python3 make gcc g++
 
 # Create database folder
 RUN mkdir -p /app/database
 
-# Copy SQL file from database folder in the root build context
-COPY database/init.sql /app/database/
+# Copy SQL init script
+COPY database/init.sql /app/database/init.sql
 
 # Copy backend source code
 COPY backend/. .
 
-# Expose port
-EXPOSE 3000
+# Initialize SQLite database INSIDE backend container
+RUN sqlite3 /app/database/mydb.sqlite < /app/database/init.sql
 
-# Start application
+EXPOSE 3000
 CMD ["npm", "start"]
