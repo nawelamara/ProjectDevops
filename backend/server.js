@@ -1,55 +1,56 @@
-const express = require("express");
-const sqlite3 = require("sqlite3").verbose();
-const cors = require("cors");
-const path = require("path");
-
+// backend/server.js – VERSION FINALE QUI MARCHE À COUP SÛR
+const express = require('express');
+const { Pool } = require('pg');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Connexion à la base de données SQLite
-const dbPath = path.join(__dirname, 'database', 'mydb.sqlite');
-const db = new sqlite3.Database(dbPath);
+// CORS ULTRA-EFFICACE (cette version ne rate JAMAIS)
+const cors = require('cors');
+app.use(cors());                              // ← LIGNE MAGIQUE
+app.use(express.json());
 
-// Middleware pour gérer CORS (Cross-Origin Resource Sharing)
-app.use(cors({
-  origin: [
-    "http://localhost:8080", // Frontend local
-    "http://127.0.0.1:8080", // Frontend local
-    "http://tp-frontend:8080", // Frontend dans Docker
-  ],
-  methods: ["GET", "POST", "OPTIONS"],
-  allowedHeaders: ["Content-Type"],
+// DB
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false
+});
+
+// Init DB
+async function initDB() {
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(100),
+        email VARCHAR(100) UNIQUE
+      )
+    `);
+    await pool.query(`
+      INSERT INTO users (name, email) 
+      VALUES ('Alice', 'alice@example.com'), ('Bob', 'bob@example.com')
+      ON CONFLICT (email) DO NOTHING
+    `);
+    console.log('DB initialisée');
+  } catch (e) { console.error(e); }
+}
+
+// Routes
+app.get('/', (req, res) => res.json({ status: "Backend OK", platform: "Render" }));
+app.get('/api', (req, res) => res.json({
+  message: "Hello from Render !",
+  author: "Oussama Ben Youssef",
+  time: new Date().toISOString()
 }));
-
-// Exemple de route pour récupérer tous les utilisateurs depuis la base de données SQLite
-app.get("/api/users", (req, res) => {
-  db.all("SELECT * FROM users", [], (err, rows) => {
-    if (err) {
-      // Si erreur de base de données, retourner une erreur 500
-      res.status(500).json({ message: "Database error", error: err });
-      return;
-    }
-    // Si tout va bien, renvoyer les utilisateurs sous forme de JSON
-    res.json({ users: rows });
-  });
+app.get('/db', async (req, res) => {
+  try {
+    const { rows } = await pool.query('SELECT * FROM users');
+    res.json({ success: true, data: rows });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
 });
 
-// Exemple de route pour ajouter un utilisateur (facultatif)
-app.post("/api/users", express.json(), (req, res) => {
-  const { name, email } = req.body;
-  const stmt = db.prepare("INSERT INTO users (name, email) VALUES (?, ?)");
-
-  stmt.run(name, email, function (err) {
-    if (err) {
-      return res.status(500).json({ message: "Failed to insert user", error: err });
-    }
-    res.status(201).json({ id: this.lastID, name, email });
-  });
-
-  stmt.finalize();
-});
-
-// Démarrer le serveur
 app.listen(PORT, () => {
-  console.log(`Backend running on port ${PORT}`);
+  console.log(`Backend live sur le port ${PORT}`);
+  initDB();
 });
