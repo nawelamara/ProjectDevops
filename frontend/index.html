@@ -4,96 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TP CI/CD – Frontend + Backend</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            text-align: center;
-            padding: 50px;
-            margin: 0;
-            min-height: 100vh;
-        }
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: rgba(0,0,0,0.3);
-            padding: 30px;
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-        }
-        h1 { font-size: 3rem; margin-bottom: 10px; }
-        h2 { color: #a0f7ff; }
-        pre {
-            text-align: left;
-            background: rgba(0,0,0,0.5);
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px 0;
-            overflow: auto;
-            font-size: 1.1rem;
-        }
-        .ok { color: #90ff90; }
-        .error { color: #ff9090; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>TP CI/CD Complet</h1>
-        <p>Oussama Ben Youssef – DevOps 2025</p>
+    <div class="wrapper">
+        <header>
+            <h1>TP CI/CD – Monitoring</h1>
+            <p>2025 – TP CI/CD</p>
+        </header>
 
-        <h2>/api – Statut du Backend</h2>
-        <div id="api-response">Connexion en cours...</div>
+        <main>
+            <section>
+                <h2>/api – Backend Status</h2>
+                <div id="api-response">Connecting...</div>
+            </section>
 
-        <h2>/db – Données PostgreSQL</h2>
-        <div id="db-response">Connexion en cours...</div>
+            <section>
+                <h2>/db – Database Status</h2>
+                <div id="db-response">Connecting...</div>
+            </section>
+        </main>
     </div>
 
-  <script>
-// URL FIXE ET CORRECTE – marche à 100 % sur Vercel
-const BACKEND_URL = 'https://tp-docker-cicd-2.onrender.com';
+    <script>
+    const BACKEND_URL = 'https://tp-docker-cicd-2.onrender.com';
 
-console.log('Frontend essaie de contacter →', BACKEND_URL);
-
-async function loadData() {
-    // Test /api
-    try {
-        const res = await fetch(BACKEND_URL + '/api');
-        const data = await res.json();
-        document.getElementById('api-response').innerHTML = 
-            `<pre style="background:#0f08;color:#0f0;padding:15px;border-radius:8px">
-BACKEND CONNECTÉ !
+    async function loadData() {
+        // API
+        try {
+            const res = await fetch(BACKEND_URL + '/api');
+            const data = await res.json();
+            document.getElementById('api-response').innerHTML = 
+                `<pre class="success">
+BACKEND CONNECTED!
 ${JSON.stringify(data, null, 2)}
-            </pre>`;
-    } catch (e) {
-        document.getElementById('api-response').innerHTML = 
-            `<pre style="background:#400;color:#f008;padding:15px;border-radius:8px">
-ERREUR API :
+                </pre>`;
+        } catch (e) {
+            document.getElementById('api-response').innerHTML = 
+                `<pre class="error">
+API ERROR:
 ${e.message}
-URL : ${BACKEND_URL}/api
-            </pre>`;
+URL: ${BACKEND_URL}/api
+                </pre>`;
+        }
+
+        // DB
+        try {
+            const res = await fetch(BACKEND_URL + '/db');
+            const data = await res.json();
+            document.getElementById('db-response').innerHTML = 
+                `<pre class="success">
+DATABASE CONNECTED!
+${JSON.stringify(data, null, 2)}
+                </pre>`;
+        } catch (e) {
+            document.getElementById('db-response').innerHTML = 
+                `<pre class="error">
+DB ERROR:
+${e.message}
+                </pre>`;
+        }
     }
 
-    // Test /db
-    try {
-        const res = await fetch(BACKEND_URL + '/db');
-        const data = await res.json();
-        document.getElementById('db-response').innerHTML = 
-            `<pre style="background:#0048;color:#0ff8;padding:15px;border-radius:8px">
-BASE DE DONNÉES CONNECTÉE !
-${JSON.stringify(data, null, 2)}
-            </pre>`;
-    } catch (e) {
-        document.getElementById('db-response').innerHTML = 
-            `<pre style="background:#400;color:#f008;padding:15px;border-radius:8px">
-ERREUR DB :
-${e.message}
-            </pre>`;
-    }
-}
-
-// Lance immédiatement
-loadData();
-</script>
+    loadData();
+    </script>
 </body>
 </html>
