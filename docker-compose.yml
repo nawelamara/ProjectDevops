@@ -11,7 +11,7 @@ services:
       - DB_HOST=dpg-d4jli5euk2gs73bo2kog-a
       - DB_PORT=5432
       - DB_USER=tpdevops_86i2_user
-      - DB_PASSWORD=YOUR_PASSWORD_HERE    # ← put your Render DB password here
+      - DB_PASSWORD=TFy9CX9pdWvmzPZ4qOT6QabsrdqD5vfS    # ← put your Render DB password here
       - DB_NAME=tpdevops_86i2
     networks:
       - webnet
