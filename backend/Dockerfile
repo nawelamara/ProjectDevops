@@ -24,7 +24,7 @@ RUN mkdir -p /app/database
 COPY database/init.sql /app/database/
 
 # Copier le reste du code de l'application (comme server.js)
-COPY backend/. .
+COPY . .
 
 # Exposer le port 3000 pour l'application
 EXPOSE 3000
