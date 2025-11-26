@@ -55,7 +55,7 @@ app.get('/', (req, res) => res.json({ status: 'Backend actif', platform: 'Render
 app.get('/api', (req, res) => {
   res.json({
     message: 'Salut depuis Render !',
-    dev: 'Oussama Ben Youssef',
+    dev: ' Nawel Amara',
     timestamp: new Date().toISOString()
   });
 });
