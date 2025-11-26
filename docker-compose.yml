@@ -2,20 +2,17 @@ version: "3.3"
 
 services:
   backend:
-    build: 
-      context: . # Utilisation du contexte racine
+    build:
+      context: .
       dockerfile: ./backend/Dockerfile
     container_name: tp-backend
     ports:
       - "3000:3000"
+    volumes:
+      - data-volume:/app/database
     networks:
       - webnet
-    depends_on:
-      - database
-    # 🚨 CORRECTION ICI : Monter le volume de données PERSISTANTES pour le backend
-    volumes:
-      - data-volume:/app/database 
-      
+
   frontend:
     build: ./frontend
     container_name: tp-frontend
@@ -25,22 +22,9 @@ services:
       - backend
     networks:
       - webnet
-      
-  database:
-    build: 
-      context: ./database
-    container_name: tp-database
-    # 🚨 CORRECTION ICI : Monter le même volume nommé que le backend
-    volumes:
-      - data-volume:/app/database 
-    # Le script RUN sqlite3 mydb.sqlite < init.sql doit être executé
-    # une fois la première fois pour initialiser le volume nommé.
-    networks:
-      - webnet
 
 networks:
   webnet:
 
-# 🚨 AJOUT : Définition du volume nommé pour partager les données SQLite
 volumes:
   data-volume:
