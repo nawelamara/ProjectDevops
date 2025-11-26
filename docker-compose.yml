@@ -7,14 +7,12 @@ services:
     ports:
       - "3000:3000"
     environment:
-      # Use your Render PostgreSQL database info here
+      # Render PostgreSQL database info
       - DB_HOST=dpg-d4jli5euk2gs73bo2kog-a
       - DB_PORT=5432
       - DB_USER=tpdevops_86i2_user
-      - DB_PASSWORD=YOUR_PASSWORD_HERE
+      - DB_PASSWORD=YOUR_PASSWORD_HERE    # ← put your Render DB password here
       - DB_NAME=tpdevops_86i2
-    depends_on:
-      - db
     networks:
       - webnet
 
@@ -28,23 +26,5 @@ services:
     networks:
       - webnet
 
-  # Optional: you can remove this 'db' service if using only Render DB
-  db:
-    image: postgres:15
-    container_name: tp-db
-    environment:
-      - POSTGRES_USER=tpdevops_86i2_user
-      - POSTGRES_PASSWORD=YOUR_PASSWORD_HERE
-      - POSTGRES_DB=tpdevops_86i2
-    ports:
-      - "5432:5432"
-    volumes:
-      - db-data:/var/lib/postgresql/data
-    networks:
-      - webnet
-
 networks:
   webnet:
-
-volumes:
-  db-data:
