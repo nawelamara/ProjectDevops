@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Docker Compose</title>
+</head>
+<body>
+    <h1>Liste des Utilisateurs du Backend</h1>
+    <ul id="user-list">
+        <li>Chargement des données...</li>
+    </ul>
+
+    <script>
+        // Fonction pour récupérer les données du backend
+        async function fetchData() {
+            const userList = document.getElementById('user-list');
+            try {
+                // 🚨 CORRECTION CRUCIALE : Utiliser localhost:3000 pour la communication du navigateur vers le conteneur exposé
+                const response = await fetch('http://localhost:3000/api/users');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                userList.innerHTML = ''; // Nettoyer la liste
+                if (data.users && data.users.length > 0) {
+                    data.users.forEach(user => {
+                        const listItem = document.createElement('li');
+                        listItem.textContent = `ID: ${user.id}, Nom: ${user.name}, Email: ${user.email}`;
+                        userList.appendChild(listItem);
+                    });
+                } else {
+                    userList.innerHTML = '<li>Aucun utilisateur trouvé.</li>';
+                }
+
+            } catch (error) {
+                console.error("Fetch error:", error);
+                userList.innerHTML = `<li>Erreur de Fetch: ${error.message}</li>`;
+            }
+        }
+
+        fetchData();
+    </script>
+</body>
+</html>
