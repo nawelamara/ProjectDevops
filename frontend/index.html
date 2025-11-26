@@ -6,43 +6,41 @@
     <title>TP CI/CD – Frontend + Backend</title>
     <style>
         body {
-            font-family: 'Verdana', sans-serif;
-            background: linear-gradient(160deg, #ff7e5f 0%, #feb47b 100%);
-            color: #222;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
             text-align: center;
-            padding: 40px;
+            padding: 50px;
             margin: 0;
             min-height: 100vh;
         }
         .container {
-            max-width: 850px;
-            margin: 20px auto;
-            background: rgba(255,255,255,0.15);
-            padding: 35px;
-            border-radius: 15px;
-            backdrop-filter: blur(8px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(0,0,0,0.3);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
         }
-        h1 { font-size: 2.8rem; margin-bottom: 15px; color: #fffde7; }
-        h2 { color: #ffd700; margin-top: 25px; }
+        h1 { font-size: 3rem; margin-bottom: 10px; }
+        h2 { color: #a0f7ff; }
         pre {
             text-align: left;
-            background: rgba(0,0,0,0.25);
-            padding: 18px;
-            border-radius: 12px;
-            margin: 18px 0;
+            background: rgba(0,0,0,0.5);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
             overflow: auto;
-            font-size: 1rem;
-            color: #fff;
+            font-size: 1.1rem;
         }
-        .ok { color: #8aff8a; }
-        .error { color: #ff7a7a; }
+        .ok { color: #90ff90; }
+        .error { color: #ff9090; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>TP CI/CD Complet</h1>
-        <p>Nawel Amara – DevOps 2025</p>
+        <p>Oussama Ben Youssef – DevOps 2025</p>
 
         <h2>/api – Statut du Backend</h2>
         <div id="api-response">Connexion en cours...</div>
@@ -52,7 +50,9 @@
     </div>
 
   <script>
+// URL FIXE ET CORRECTE – marche à 100 % sur Vercel
 const BACKEND_URL = 'https://tp-docker-cicd-2.onrender.com';
+
 console.log('Frontend essaie de contacter →', BACKEND_URL);
 
 async function loadData() {
@@ -61,13 +61,13 @@ async function loadData() {
         const res = await fetch(BACKEND_URL + '/api');
         const data = await res.json();
         document.getElementById('api-response').innerHTML = 
-            `<pre style="background:#2a2a2a;color:#90ee90;padding:12px;border-radius:6px">
+            `<pre style="background:#0f08;color:#0f0;padding:15px;border-radius:8px">
 BACKEND CONNECTÉ !
 ${JSON.stringify(data, null, 2)}
             </pre>`;
     } catch (e) {
         document.getElementById('api-response').innerHTML = 
-            `<pre style="background:#330000;color:#ff9999;padding:12px;border-radius:6px">
+            `<pre style="background:#400;color:#f008;padding:15px;border-radius:8px">
 ERREUR API :
 ${e.message}
 URL : ${BACKEND_URL}/api
@@ -79,19 +79,20 @@ URL : ${BACKEND_URL}/api
         const res = await fetch(BACKEND_URL + '/db');
         const data = await res.json();
         document.getElementById('db-response').innerHTML = 
-            `<pre style="background:#001f3f;color:#00ffff;padding:12px;border-radius:6px">
+            `<pre style="background:#0048;color:#0ff8;padding:15px;border-radius:8px">
 BASE DE DONNÉES CONNECTÉE !
 ${JSON.stringify(data, null, 2)}
             </pre>`;
     } catch (e) {
         document.getElementById('db-response').innerHTML = 
-            `<pre style="background:#330000;color:#ff9999;padding:12px;border-radius:6px">
+            `<pre style="background:#400;color:#f008;padding:15px;border-radius:8px">
 ERREUR DB :
 ${e.message}
             </pre>`;
     }
 }
 
+// Lance immédiatement
 loadData();
 </script>
 </body>
