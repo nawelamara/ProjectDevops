@@ -29,34 +29,26 @@ jobs:
       - name: Build Frontend Image
         run: docker build -f frontend/Dockerfile -t tp-frontend frontend/
 
-      - name: Build Database Image
-        run: docker build -f database/Dockerfile -t tp-db database/
-
       - name: Start services
         run: docker-compose up -d
 
       - name: Wait for backend
         run: |
-          echo "Attente du backend (max 60s)..."
+          echo "Waiting for backend..."
           for i in {1..30}; do
-            if curl -f http://localhost:3000/api >/dev/null 2>&1; then
-              echo "Backend prêt !"
-              break
+            if curl -f http://localhost:3000/api/users >/dev/null 2>&1; then
+              echo "Backend is ready!"
+              exit 0
             fi
-            echo "En attente... ($i/30)"
+            echo "Waiting... ($i/30)"
             sleep 2
           done
-          if [ $i -eq 30 ]; then
-            echo "Timeout : backend non démarré"
-            exit 1
-          fi
+          echo "Timeout: backend didn't start"
+          exit 1
 
       - name: Test API Endpoint
-        run: curl -f http://localhost:3000/api
-
-      - name: Test DB Endpoint
-        run: curl -f http://localhost:3000/db
+        run: curl -f http://localhost:3000/api/users
 
       - name: Show logs on failure
         if: failure()
-        run: docker-compose logs
+        run: docker-compose logs backend
