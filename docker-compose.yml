@@ -1,4 +1,4 @@
-version: "3.3"
+version: "3.8"
 
 services:
   backend:
@@ -6,16 +6,17 @@ services:
     container_name: tp-backend
     ports:
       - "3000:3000"
-    networks:
-      - webnet
+    environment:
+      # Use your Render PostgreSQL database info here
+      - DB_HOST=dpg-d4jli5euk2gs73bo2kog-a
+      - DB_PORT=5432
+      - DB_USER=tpdevops_86i2_user
+      - DB_PASSWORD=YOUR_PASSWORD_HERE
+      - DB_NAME=tpdevops_86i2
     depends_on:
       - db
-    environment:
-      - DB_HOST=db
-      - DB_PORT=5432
-      - DB_USER=admin
-      - DB_PASSWORD=secret
-      - DB_NAME=mydb
+    networks:
+      - webnet
 
   frontend:
     build: ./frontend
@@ -27,19 +28,20 @@ services:
     networks:
       - webnet
 
+  # Optional: you can remove this 'db' service if using only Render DB
   db:
-    build: ./database
+    image: postgres:15
     container_name: tp-db
     environment:
-      - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=secret
-      - POSTGRES_DB=mydb
+      - POSTGRES_USER=tpdevops_86i2_user
+      - POSTGRES_PASSWORD=YOUR_PASSWORD_HERE
+      - POSTGRES_DB=tpdevops_86i2
+    ports:
+      - "5432:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
     networks:
       - webnet
-    ports:
-      - "5432:5432"
 
 networks:
   webnet:
