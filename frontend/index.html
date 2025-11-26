@@ -1,72 +1,66 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TP CI/CD – Frontend + Backend</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard – Tests Backend & Base de Données</title>
+
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-    <div class="wrapper">
-        <header>
-            <h1>TP CI/CD – Monitoring</h1>
-            <p>2025 – TP CI/CD</p>
-        </header>
 
-        <main>
-            <section>
-                <h2>/api – Backend Status</h2>
-                <div id="api-response">Connecting...</div>
-            </section>
+  <header class="header">
+      <h1>Monitoring CI/CD</h1>
+      <p class="subtitle">Vérification du backend & PostgreSQL</p>
+  </header>
 
-            <section>
-                <h2>/db – Database Status</h2>
-                <div id="db-response">Connecting...</div>
-            </section>
-        </main>
-    </div>
+  <main class="main-container">
+      
+      <section class="card">
+          <h2>Statut API</h2>
+          <div id="api-response" class="response">Chargement...</div>
+      </section>
 
-    <script>
-    const BACKEND_URL = 'https://tp-docker-cicd-2.onrender.com';
+      <section class="card">
+          <h2>Données de la Base</h2>
+          <div id="db-response" class="response">Chargement...</div>
+      </section>
 
-    async function loadData() {
-        // API
-        try {
-            const res = await fetch(BACKEND_URL + '/api');
-            const data = await res.json();
-            document.getElementById('api-response').innerHTML = 
-                `<pre class="success">
-BACKEND CONNECTED!
-${JSON.stringify(data, null, 2)}
-                </pre>`;
-        } catch (e) {
-            document.getElementById('api-response').innerHTML = 
-                `<pre class="error">
-API ERROR:
-${e.message}
-URL: ${BACKEND_URL}/api
-                </pre>`;
-        }
+  </main>
 
-        // DB
-        try {
-            const res = await fetch(BACKEND_URL + '/db');
-            const data = await res.json();
-            document.getElementById('db-response').innerHTML = 
-                `<pre class="success">
-DATABASE CONNECTED!
-${JSON.stringify(data, null, 2)}
-                </pre>`;
-        } catch (e) {
-            document.getElementById('db-response').innerHTML = 
-                `<pre class="error">
-DB ERROR:
-${e.message}
-                </pre>`;
-        }
+  <script>
+    // Change ONLY THIS URL if needed
+    const BACKEND_URL = "https://tp-docker-cicd-2.onrender.com";
+
+    console.log("→ Test du backend:", BACKEND_URL);
+
+    async function fetchAPI() {
+      try {
+        const r = await fetch(`${BACKEND_URL}/api`);
+        const data = await r.json();
+        document.getElementById("api-response").innerHTML =
+          `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+      } catch (err) {
+        document.getElementById("api-response").innerHTML =
+          `<span class="error">Erreur API : ${err.message}</span>`;
+      }
     }
 
-    loadData();
-    </script>
+    async function fetchDB() {
+      try {
+        const r = await fetch(`${BACKEND_URL}/db`);
+        const data = await r.json();
+        document.getElementById("db-response").innerHTML =
+          `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+      } catch (err) {
+        document.getElementById("db-response").innerHTML =
+          `<span class="error">Erreur DB : ${err.message}</span>`;
+      }
+    }
+
+    fetchAPI();
+    fetchDB();
+  </script>
 </body>
 </html>
