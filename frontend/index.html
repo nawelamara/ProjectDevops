@@ -1,48 +1,98 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Application Docker Compose</title>
+    <title>TP CI/CD – Frontend + Backend</title>
+    <style>
+        body {
+            font-family: 'Verdana', sans-serif;
+            background: linear-gradient(160deg, #ff7e5f 0%, #feb47b 100%);
+            color: #222;
+            text-align: center;
+            padding: 40px;
+            margin: 0;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 850px;
+            margin: 20px auto;
+            background: rgba(255,255,255,0.15);
+            padding: 35px;
+            border-radius: 15px;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        h1 { font-size: 2.8rem; margin-bottom: 15px; color: #fffde7; }
+        h2 { color: #ffd700; margin-top: 25px; }
+        pre {
+            text-align: left;
+            background: rgba(0,0,0,0.25);
+            padding: 18px;
+            border-radius: 12px;
+            margin: 18px 0;
+            overflow: auto;
+            font-size: 1rem;
+            color: #fff;
+        }
+        .ok { color: #8aff8a; }
+        .error { color: #ff7a7a; }
+    </style>
 </head>
 <body>
-    <h1>Liste des Utilisateurs du Backend</h1>
-    <ul id="user-list">
-        <li>Chargement des données...</li>
-    </ul>
+    <div class="container">
+        <h1>TP CI/CD Complet</h1>
+        <p>Nawel Amara – DevOps 2025</p>
 
-    <script>
-        // Fonction pour récupérer les données du backend
-        async function fetchData() {
-            const userList = document.getElementById('user-list');
-            try {
-                // 🚨 CORRECTION CRUCIALE : Utiliser localhost:3000 pour la communication du navigateur vers le conteneur exposé
-                const response = await fetch('http://localhost:3000/api/users');
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const data = await response.json();
-                
-                userList.innerHTML = ''; // Nettoyer la liste
-                if (data.users && data.users.length > 0) {
-                    data.users.forEach(user => {
-                        const listItem = document.createElement('li');
-                        listItem.textContent = `ID: ${user.id}, Nom: ${user.name}, Email: ${user.email}`;
-                        userList.appendChild(listItem);
-                    });
-                } else {
-                    userList.innerHTML = '<li>Aucun utilisateur trouvé.</li>';
-                }
+        <h2>/api – Statut du Backend</h2>
+        <div id="api-response">Connexion en cours...</div>
 
-            } catch (error) {
-                console.error("Fetch error:", error);
-                userList.innerHTML = `<li>Erreur de Fetch: ${error.message}</li>`;
-            }
-        }
+        <h2>/db – Données PostgreSQL</h2>
+        <div id="db-response">Connexion en cours...</div>
+    </div>
 
-        fetchData();
-    </script>
+  <script>
+const BACKEND_URL = 'https://tp-docker-cicd-2.onrender.com';
+console.log('Frontend essaie de contacter →', BACKEND_URL);
+
+async function loadData() {
+    // Test /api
+    try {
+        const res = await fetch(BACKEND_URL + '/api');
+        const data = await res.json();
+        document.getElementById('api-response').innerHTML = 
+            `<pre style="background:#2a2a2a;color:#90ee90;padding:12px;border-radius:6px">
+BACKEND CONNECTÉ !
+${JSON.stringify(data, null, 2)}
+            </pre>`;
+    } catch (e) {
+        document.getElementById('api-response').innerHTML = 
+            `<pre style="background:#330000;color:#ff9999;padding:12px;border-radius:6px">
+ERREUR API :
+${e.message}
+URL : ${BACKEND_URL}/api
+            </pre>`;
+    }
+
+    // Test /db
+    try {
+        const res = await fetch(BACKEND_URL + '/db');
+        const data = await res.json();
+        document.getElementById('db-response').innerHTML = 
+            `<pre style="background:#001f3f;color:#00ffff;padding:12px;border-radius:6px">
+BASE DE DONNÉES CONNECTÉE !
+${JSON.stringify(data, null, 2)}
+            </pre>`;
+    } catch (e) {
+        document.getElementById('db-response').innerHTML = 
+            `<pre style="background:#330000;color:#ff9999;padding:12px;border-radius:6px">
+ERREUR DB :
+${e.message}
+            </pre>`;
+    }
+}
+
+loadData();
+</script>
 </body>
 </html>
