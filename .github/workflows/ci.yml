@@ -24,7 +24,7 @@ jobs:
           docker-compose --version
 
       - name: Build Backend Image
-        run: docker build -f backend/Dockerfile -t tp-backend backend/
+        run: docker build -f backend/Dockerfile -t tp-backend .
 
       - name: Build Frontend Image
         run: docker build -f frontend/Dockerfile -t tp-frontend frontend/
